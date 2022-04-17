@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const HeaderS = styled.div`
     display: flex;
-    margin: 30px auto;
+    margin: 30px auto 60px auto;
     border: 1px solid red;
     width: 85%;
     height: 35vh;

@@ -31,6 +31,7 @@ const RowS = styled.div`
 const SkillPrimS = styled.div`
 `
 const Outwrap = styled.div`
+    transition: all 0.5s linear;
     background-color: #f5ab51;
     position: relative;
     right: ${props => props.move}px;
@@ -66,27 +67,30 @@ const skillsSec = [
 
 const Skills = () => {
     const [ carPos, setCarPos ] = useState(0)
-    const moveCarousel = ( direction ) => {
-        if( direction == 'R' ){
-            setCarPos( carPos + 10 )
-        }else{
-            setCarPos( carPos - 10 )
-        }
-    }
+    const [ valueCarousel, setValueCarousel ] = useState(50)
     const nodeSkill = useRef(0)
     useEffect(() => {
-        let nodeSkillBounding = nodeSkill.current.getBoundingClientRect();
+        const bounding = nodeSkill.current.getBoundingClientRect();
+        const totalPxInNode = bounding.right - bounding.left
         nodeSkill.current.addEventListener("mousemove", e => {
-            console.clear();
-            console.log( "ClientX", e.clientX)
-            console.log( 'BoundingR', nodeSkillBounding.right )
-            console.log( 'BoundingL', nodeSkillBounding.left )
-            console.log( "Resta", e.clientX - nodeSkillBounding.left )
-
+            let positionXInPx = e.clientX - bounding.left
+            let porcentCursorX = positionXInPx * 100 / totalPxInNode
+            let porcentCursorXtoFix = ((porcentCursorX / 10).toFixed()) * 10
+            setValueCarousel( porcentCursorXtoFix )
+            console.log(  )
         })
     })
-
-    console.log( 'hola', nodeSkill.current )
+    useEffect( () => {
+        let velocity = ( (valueCarousel - 50) ^ 2 ) / ( 5 * 2 )
+        let velocitySet = velocity.toFixed() * 8
+        if( valueCarousel > 20 && valueCarousel < 80 ){
+        }else{
+            let interv = setInterval( () =>{
+                setCarPos( carPos => carPos + velocitySet )
+            }, 100)
+            return () => clearInterval( interv )
+        }
+    }, [valueCarousel] )
     return(
         <SkillsS>
             <SkillPrimS ref={nodeSkill}>
@@ -104,12 +108,10 @@ const Skills = () => {
                 <RowsS>
                     <RowS 
                         rot={ true }
-                        onClick={() => moveCarousel('L') }
                     >
                         <img src='arrowrigth96.png' />
                     </RowS>
                     <RowS
-                        onClick={() => moveCarousel('R') }
                     >
                         <img src='arrowrigth96.png' />
                     </RowS>
